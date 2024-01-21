@@ -60,6 +60,13 @@ router.post('/send-otp', async (req, res) => {
   });
 });
 
+router.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://main.dfo2h8ed1l3ni.amplifyapp.com');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
 
 router.post('/verify-otp', async(req, res) => {
     const {  otp } = req.body;
