@@ -60,15 +60,13 @@ router.post('/send-otp', async (req, res) => {
   });
 });
 
-router.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://main.dfo2h8ed1l3ni.amplifyapp.com');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
+
 
 
 router.post('/verify-otp', async(req, res) => {
+  res.header('Access-Control-Allow-Origin', 'https://main.dfo2h8ed1l3ni.amplifyapp.com');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
     const {  otp } = req.body;
     const admin=await Admin.findOne({username:"admin"});
     email= admin.email;
