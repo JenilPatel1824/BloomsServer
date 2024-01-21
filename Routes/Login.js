@@ -166,7 +166,7 @@ router.post("/login", async (req, res) => {
  
         .status(202)
 
-        .status(205)
+        
         .json({ msg: "Login Successful", adminToken: token,username:username });
     } 
 
