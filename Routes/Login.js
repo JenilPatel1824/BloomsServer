@@ -163,11 +163,10 @@ router.post("/login", async (req, res) => {
       res.cookie("token", token, { httpOnly: true });
 
       return res
-<<<<<<< HEAD
+ 
         .status(202)
-=======
+
         .status(205)
->>>>>>> 3e3fe7b (portchange)
         .json({ msg: "Login Successful", adminToken: token,username:username });
     } 
 
