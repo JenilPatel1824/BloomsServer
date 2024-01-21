@@ -10,7 +10,7 @@ const port = 3000;
 let toEmail;
 // router.use(bodyParser.json());
 
-outer.use((req, res, next) => {
+router.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'https://main.dfo2h8ed1l3ni.amplifyapp.com');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
