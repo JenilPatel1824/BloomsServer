@@ -33,21 +33,19 @@ router.post('/checkerforfunctioncall', async (req, res) => {
             // If the flag doesn't exist or is false, create/update entry with flag set to true
             await Studentflag.findOneAndUpdate(
               {
-                subject,
-                semester,
-                co,
-                studentId,
+                subject:subject,
+                semester:semester,
+                co:co,
+                studentId:studentId,
               },
               { flag: true },
               { upsert: true }
             );
-  
-            // You may choose to return true immediately if at least one CO is false
+           return res.json(true);
           }
         }
       }
   
-      res.json(true);
     } catch (error) {
       console.error('Error handling practice question request:', error);
       res.status(500).json({ error: 'Internal Server Error' });

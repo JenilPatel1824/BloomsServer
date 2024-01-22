@@ -5,6 +5,9 @@ const assignedQuestionModel = require('../models/asiignedQuestionSchema');
 const subjectData = require('../models/subjectDataSchema'); // Import your Mark schema
 const Student = require('../models/Student');
 const Mark = require('../models/mark'); // Import your Mark schema
+const studentSchema=require('../models/studentSchema');
+const mongoose = require('mongoose');
+const studentmodel=mongoose.model('student',studentSchema);
 
 
 const router = express.Router();
@@ -38,14 +41,13 @@ console.log(cutoff);
 // The rest of your code continues...
 
     const coMark=subdetails.coMarks;
-    console.log("cutoff before: " + coMark);
 
     for (let i = 0; i < coMark.length; i++) {
         coMark[i] = (coMark[i] * cutoff) / 100;
     }
     
-    console.log("cutoff after: " + coMark);
-    
+
+    console.log("studentId is in pqs: "+studentId);
 
     const student=await Student.findOne({_id : studentId });
     const egovid=student.id;
@@ -61,6 +63,7 @@ console.log(cutoff);
             console.log("Loop called for "+stdmark[i]+" cutofff"+coMark);
             let x=i+1;
              let s="CO"+x;
+             console.log("calling practice questionsssssss::::::::::"+s);
             practiceQuestions = await getPracticeQuestions(subject, semester.toString(),s,studentId);
             
         }

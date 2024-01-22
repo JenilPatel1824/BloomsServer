@@ -30,17 +30,25 @@ router.post('/removestudent/:id', async (req, res) => {
 
 
     let stdid=student._id;
+    const mark=await Mark.find({studentId:stdid});
+    if(!mark)
+    {
+        return res.json({message: "Student entry not found in student mark data(1 deleted)"});
+    }
+    await Mark.deleteMany({studentId:stdid});
+
+
     const std=await Student.findOne({id:studentUserName});
     if(!std)
     {
-        return res.json({message: "Student entry not found in student mappint data(1 deleted)"});
+        return res.json({message: "Student entry not found in student mapping data(2 deleted)"});
     }
     await Student.deleteOne({id:studentUserName});
 
     const stdasg=await assignedQuestionModel.find({studentId:stdid});
     if(!stdasg.length>0)
     {
-        return res.json({message: "Student entry not found in  data(2 delete performed)"});
+        return res.json({message: "Student entry not found in  data(3 delete performed)"});
 
     }
     await Student.deleteMany({studentId:stdid});
@@ -67,6 +75,9 @@ router.post('/removeallstudent', async (req, res) => {
       });
     }
         await Studentx.collection.drop();
+        await Student.collection.drop();
+        await assignedQuestionModel.collection.drop();
+        await Mark.collection.drop();
 
         
       return res.json({

@@ -10,6 +10,8 @@ const flagForSessional = require('../models/flagForSessional');
 const semrollschema=require('../models/semrollschema')
 const Student = require('../models/Student'); // Import your Student schema
 const Mark = require('../models/mark'); // Import your Mark schema
+const studentSchema = require('../models/studentSchema');
+const Studentmain=mongoose.model('student',studentSchema);
 
 
 let StudentModel;
@@ -89,6 +91,8 @@ router.post("/fetchmark", async (req, res) => {
     const studentl = await Student.findOne({ id: luname });
     let sem=studentl.sem;
     let roll=studentl.roll;
+
+    // const stdidinmain=await Studentmain.findOne({username: luname});
     let ids=studentl._id;
 
     console.log(roll);
