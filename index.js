@@ -27,7 +27,7 @@ app.listen(portnumber, () => {
 });
 
 app.use((req, res, next) => {
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || "http://localhost:3000";
+  const allowedOrigin =  "http://localhost:3000" ||process.env.ALLOWED_ORIGIN;
 
   res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
   res.header(
