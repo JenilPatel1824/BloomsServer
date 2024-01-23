@@ -11,7 +11,7 @@ let toEmail;
 // router.use(bodyParser.json());
 
 router.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000' || process.env.ALLOWED_ORIGIN);
+  res.header('Access-Control-Allow-Origin', '*' || process.env.ALLOWED_ORIGIN);
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
