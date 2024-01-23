@@ -39,29 +39,26 @@ router.post('/viewdsem/:id', async (req, res) => {
 });
 
 
-router.post('/removealldsem', async (req, res) => {
-    try { 
-
-        const collections = await mongoose.connection.db.listCollections({ name: 'studentxies' }).toArray();
-
-    if (!collections.length > 0) {
-      return res.json({
-        exists: false,
-        message: 'Student mapping (studentxies) Collection Not exists.',
-      });
+router.post('/removemapping/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const student= await Student.findOne({id:id});
+    if(!student)
+    {
+        return res.json({message: "Unable to find student"});
     }
-        await Student.collection.drop();
+    await Student.deleteOne({id:id});
 
-        
-      return res.json({
-        message: 'All Student Sem roll mapping Data Deleted Successfully.',
-      });
-    } catch (error) {
-      console.error('Error removing all students mapping with roll from MongoDB:', error);
-      return res.status(500).json({ message: 'Internal Server Error' });
-    }
-  });
+    return res.json({
+      message: 'Student  Data Deleted Successfully.',
+    });
+  } catch (error) {
+    console.error('Error removing Student from MongoDB:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 
+ 
 
 
 module.exports = router;
