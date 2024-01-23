@@ -64,6 +64,13 @@ app.use('/',require("./Routes/remove_professor"))
 app.use('/',require(".//Routes/view_professor_admin"))
 app.use('/',require("./Routes/view_noof_student_admin"))
 app.use('/',require("./Routes/massemailsender"))
+app.use('/',require("./Routes/studentdataforadmin"))
+app.use('/',require("./Routes/professordataforadmin"))
+app.use('/',require("./Routes/mappingdataforadmin"))
+app.use('/',require("./Routes/removeMappings"))
+
+
+
 
 
 
