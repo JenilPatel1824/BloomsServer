@@ -6,24 +6,28 @@ const path = require('path'); // Import the path module
 const router = express.Router();
 
 // Serve the sample Excel file from the 'public' folder
-router.use('/downloadsamplefile', express.static(path.join(__dirname, '../../fsd_client/public')));
+router.use('/downloadsamplefile', express.static(path.join(__dirname, './Public')));
 
 // Endpoint to serve the sample Excel file
 router.get('/downloadsamplefile/Upload_Mark_Sample.xlsx', (req, res) => {
-    const filePath = path.join(__dirname, '../../fsd_client/public', 'Upload_Mark_Sample.xlsx');
+    const filePath = path.join(__dirname, './Public', 'Upload_Mark_Sample.xlsx');
   
     res.sendFile(filePath);
   });
   router.get('/downloadsamplefile/Upload_Question_Sample.xlsx', (req, res) => {
-    const filePath = path.join(__dirname, '../../fsd_client/public', 'Upload_Question_Sample.xlsx');
+    const filePath = path.join(__dirname, './Public', 'Upload_Question_Sample.xlsx');
     res.sendFile(filePath);
   });
   router.get('/downloadsamplefile/Upload_Student_Sample.xlsx', (req, res) => {
-    const filePath = path.join(__dirname, '../../fsd_client/public', 'Upload_Student_Sample.xlsx');
+    const filePath = path.join(__dirname, './Public', 'Upload_Student_Sample.xlsx');
     res.sendFile(filePath);
   });
   router.get('/downloadsamplefile/Upload_Professor_Sample.xlsx', (req, res) => {
-    const filePath = path.join(__dirname, '../../fsd_client/public', 'Upload_Professor_Sample.xlsx');
+    const filePath = path.join(__dirname, './Public', 'Upload_Professor_Sample.xlsx');
+    res.sendFile(filePath);
+  });
+  router.get('/downloadsamplefile/Upload_Mapping_Sample.xlsx', (req, res) => {
+    const filePath = path.join(__dirname, './Public', 'Upload_Mapping_Sample.xlsx');
     res.sendFile(filePath);
   });
 

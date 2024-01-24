@@ -86,7 +86,9 @@ router.post('/verify-otp', async(req, res) => {
   
     // OTP is correct, you can clear it from the map or mark it as used
     otpMap.delete(email);
+    adminToken = jwt.sign({ id: admin._id, username: admin.username }, secretKey, { expiresIn: '1h' });
+
+  res.status(200).json({ msg: 'OTP verified successfully', adminToken })
   
-    res.status(200).json({ msg: 'OTP verified successfully' });
   });
   module.exports = router;

@@ -13,6 +13,8 @@ const assignedQuestionModel = require('../models/asiignedQuestionSchema');
 
 const Student= require('../models/Student');
 
+const Studentflag=require('../models/studentFalgSchema');
+
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -53,6 +55,14 @@ router.post('/removestudent/:id', async (req, res) => {
     }
     await Student.deleteMany({studentId:stdid});
 
+    const stdflag=await Studentflag.find({studentId:studentUserName});
+    if(!stdflag.length>0)
+    {
+        return res.json({message: "Student entry not found in  data(4 delete performed)"});
+
+    }
+    await Student.deleteMany({studentId:studentUserName});
+
     return res.json({
       message: 'Student  Data Deleted Successfully.',
     });
@@ -78,6 +88,8 @@ router.post('/removeallstudent', async (req, res) => {
         await Student.collection.drop();
         await assignedQuestionModel.collection.drop();
         await Mark.collection.drop();
+        await Studentflag.collection.drop();
+
 
         
       return res.json({
