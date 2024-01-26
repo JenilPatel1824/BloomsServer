@@ -18,7 +18,7 @@ const verifyToken = (req, res, next) => {
       return res.status(401).json({ message: 'Invalid token.' });
     }
 
-    req.user = decoded;
+    req.user = { userId: decoded.user.username }; // Adjust based on how the user ID is stored
     next();
   });
 };
@@ -38,7 +38,8 @@ const verifyStudentToken = (req, res, next) => {
         return res.status(401).json({ message: 'Invalid token.' });
       }
   
-      req.user = decoded;
+      req.user = { userId: decoded.user.username }; // Adjust based on how the user ID is stored
+      console.log("in auth.js "+req.user);
       next();
     });
   };
@@ -58,7 +59,7 @@ const verifyStudentToken = (req, res, next) => {
         return res.status(401).json({ message: 'Invalid token.' });
       }
   
-      req.user = decoded;
+      req.user = { userId: decoded.user.username }; // Adjust based on how the user ID is stored
       next();
     });
   };
