@@ -17,12 +17,7 @@ const Professor= mongoose.model("professor",professorSchema);
 router.post('/removeprofessor/:id', async (req, res) => {
   try {
     const professorUserName = req.params.id;
-    const professor= await Professor.findOne({username:professorUserName});
-    if(!professor)
-    {
-        return res.json({message: "Unable to find professor"});
-    }
-    console.log("delete called 1");
+    
     await Professor.deleteOne({username:professorUserName});
 
     return res.json({

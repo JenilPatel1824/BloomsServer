@@ -8,6 +8,8 @@ router.post('/getsubmissionlink', async (req, res) => {
    
     const { semester, subject, name, co } = req.body;
 
+    console.log("sem: "+semester+" subject: "+subject+" name: "+name+"co: "+co);
+
     const coname = Object.keys(co)[0];
     const submissionLinkobj= await Submission.findOne({subject:subject,co:coname,id:name});
 

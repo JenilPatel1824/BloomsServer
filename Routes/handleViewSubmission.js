@@ -9,9 +9,12 @@ const questionModel = require("../models/practiceQuestionsSchema");
 const assignedQuestionModel = require("../models/asiignedQuestionSchema");
 
 router.post("/geteverythingaboutstudent", async (req, res) => {
-    const { sem, subjectName } = req.body;
-console.log("sem: "+sem," subject: "+subjectName);
+
+  console.log("req is in server getevst");
+    const { sem, subjectName,selectedDepartment } = req.body;
+console.log("sem: "+sem," subject: "+subjectName +"department: "+selectedDepartment);
   const subdetails = await subjectData.findOne({
+    department:selectedDepartment,
     sem: sem,
     subject: subjectName,
   });
@@ -32,7 +35,7 @@ console.log("sem: "+sem," subject: "+subjectName);
     coMark[i] = (coMark[i] * cutoff) / 100;
   }
 
-  const markobjs = await Mark.find({ semester: sem, subject: subjectName });
+  const markobjs = await Mark.find({ semester: sem, subject: subjectName,department:selectedDepartment });
   for(let markobj of markobjs)
   {
     let flag=false;

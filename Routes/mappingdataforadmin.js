@@ -27,7 +27,7 @@ router.post('/mappingdataadmin', async (req, res) => {
     console.log(selectedDepartmentm);
     console.log(selectedSemm);
     
-         mappings =await Student.find({sem:selectedSemm});
+         mappings =await Student.find({sem:selectedSemm,id:{ $regex: `^..${selectedDepartmentm}` }});
 
     
     console.log(mappings);

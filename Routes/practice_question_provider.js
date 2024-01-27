@@ -15,8 +15,13 @@ const router = express.Router();
 router.post('/fetchpracticequestion', async (req, res) => {
   try {
     
+    
     let practiceQuestions;
     const {subject, semester, studentId, rollNo,requiredco}= req.body;
+    const studentn=await Student.findOne({_id:studentId});
+    let studentIds=studentn.id;
+    let department=studentIds[2]+studentIds[3];
+    console.log("dep created:  "+department);
     if (subject === undefined) {
         console.error('Subject is undefined');
         res.status(400).json({ error: 'Subject is undefined' });
@@ -25,7 +30,8 @@ router.post('/fetchpracticequestion', async (req, res) => {
     console.log("called target for "+subject);
 
     
-    const subdetails = await subjectData.findOne({ sem: semester, subject: subject });
+    const subdetails = await subjectData.findOne({ sem: semester, subject: subject,department:department });
+    console.log(department);
      console.log(subject);
      console.log(subdetails);
 
@@ -64,7 +70,7 @@ console.log(cutoff);
             let x=i+1;
              let s="CO"+x;
              console.log("calling practice questionsssssss::::::::::"+s);
-            practiceQuestions = await getPracticeQuestions(subject, semester.toString(),s,studentId);
+            practiceQuestions = await getPracticeQuestions(subject, semester.toString(),s,studentId,department);
             
         }
     }
@@ -77,14 +83,14 @@ console.log(cutoff);
   }
 });
 
-async function getPracticeQuestions(subject, semester, co,studentId) {
+async function getPracticeQuestions(subject, semester, co,studentId,department) {
 
     let numberOfQuestions=5;
     try {
        
         // Use the Mongoose model to query the database for random questions
 
-        const isquestion = await questionModel.find({subject:subject, semester:semester, co:co});
+        const isquestion = await questionModel.find({subject:subject, semester:semester, co:co,department:department});
         if(isquestion.length==0)
         {
             console.log("no Questions");
@@ -92,7 +98,7 @@ async function getPracticeQuestions(subject, semester, co,studentId) {
             return x;
         }
         const questions = await questionModel.aggregate([
-          { $match: { semester, subject, co } },
+          { $match: { semester, subject, co,department } },
           { $sample: { size: numberOfQuestions } },
         ]);
         console.log("Checking condition");
@@ -100,7 +106,7 @@ async function getPracticeQuestions(subject, semester, co,studentId) {
        const questionTexts = questions.map(question => question.question);
        //console.log(questionTexts);
 
-        assignRandomQuestions(studentId,subject,questions,co);
+        assignRandomQuestions(studentId,subject,questions,co,department);
      }
     
       catch (error) {
@@ -108,7 +114,7 @@ async function getPracticeQuestions(subject, semester, co,studentId) {
         throw error; // You can handle the error according to your application's needs
       }
 };
-const assignRandomQuestions = async (studentId, subject, questions,co) => {
+const assignRandomQuestions = async (studentId, subject, questions,co,department) => {
     try {
       // Map the questions to get their _id values
       const questionIds = questions.map(question => question._id);
@@ -127,6 +133,7 @@ const assignRandomQuestions = async (studentId, subject, questions,co) => {
         subject: subject,
         CO: co,
         studentId: studentId,
+        department:department,
       });
 
       console.log("this is not exist: "+result);

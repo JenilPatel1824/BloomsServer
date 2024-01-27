@@ -18,7 +18,7 @@ const nodemailer = require('nodemailer');
 
 
 router.post("/verifysubmission", async (req, res) => {
-    const { action,remark, coItem,sem,subject,id } = req.body;
+    const { action,remark, coItem,sem,subject,id,username } = req.body;
     const co = Object.keys(coItem)[0];
     let flag;
     const subm=await Submission.findOne({subject:subject,co:co,id:id});
@@ -30,8 +30,8 @@ router.post("/verifysubmission", async (req, res) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'jenil.kajavadara1@gmail.com',
-          pass: 'ffqv fonr ojes tcom',
+          user: process.env.ADMIN_GMAIL,
+          pass: process.env.ADMIN_PASS,
         },
       });
        const studentdata=await StudentModel.findOne({username:id});
@@ -39,10 +39,10 @@ router.post("/verifysubmission", async (req, res) => {
 
 
       const mailOptions = {
-        from: 'jenil.kajavadara1@gmail.com',
+        from: process.env.ADMIN_EMAIL,
         to: remail,
         subject: 'About Submission',
-        text: 'Your Submission for Subject '+subject+" is "+action +"ed you can check more details by login into portal",
+        text: 'Your Submission for Subject '+subject+" is "+action +"ed by "+username +" you can check more details by login into portal",
       };
 
       transporter.sendMail(mailOptions, (error, info) => {

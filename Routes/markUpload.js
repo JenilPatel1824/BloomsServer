@@ -31,6 +31,7 @@ router.post('/upload-endpoint', upload.single('file'), async (req, res) => {
 
 
     const sdata={
+      department:department,
         sem:sem,
         subject:subject,
         coMarks:coMarks,
@@ -60,6 +61,7 @@ router.post('/upload-endpoint', upload.single('file'), async (req, res) => {
           const co6 = row.getCell(7).value;
 
           marksData.push({
+            department:department,
             rollNo: rollNo,
             semester: sem,
             subject: subject,
@@ -73,13 +75,29 @@ router.post('/upload-endpoint', upload.single('file'), async (req, res) => {
         }
       });
     });
-
+    let stid;
+    let students=[];
     // Assuming student details are already in the database
-    const students = await Student.find({ sem: sem });
+    const std=await Student.find({sem:sem});
+    for(st of std)
+    {
+      let id=st.id.toString();
+      let depname=id[2]+id[3];
+      if (depname==department)
+      {
+        students.push(st);
+      }
+
+
+    }
+    //const students = await Student.find({ sem: sem });
+    
 
     // Insert marks data into MongoDB
    // Insert marks data into MongoDB
 for (const mark of marksData) {
+
+
     const student = students.find((s) => s.roll === mark.rollNo);
   
     if (student) {

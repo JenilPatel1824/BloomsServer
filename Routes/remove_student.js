@@ -4,6 +4,7 @@ const exceljs = require('exceljs');
 const stream = require('stream');
 const router = express.Router();
 const studentSchema = require('../models/studentSchema'); // Import your Student schema
+const Submission = require("../models/sumissionSchema");
 
 const Mark = require('../models/mark'); // Import your Mark schema
 const subjectData = require('../models/subjectDataSchema'); // Import your Mark schema
@@ -22,46 +23,26 @@ const upload = multer({ storage });
 router.post('/removestudent/:id', async (req, res) => {
   try {
     const studentUserName = req.params.id;
-    const student= await Studentx.findOne({username:studentUserName});
-    if(!student)
-    {
-        return res.json({message: "Unable to find student"});
-    }
-    console.log("delete called 1");
-    await Studentx.deleteOne({username:studentUserName});
+    console.log("remove called for "+studentUserName);
 
+    await Submission.deleteMany({id:studentUserName});
 
-    let stdid=student._id;
-    const mark=await Mark.find({studentId:stdid});
-    if(!mark)
+    const student= await Student.findOne({id:studentUserName});
+    let stdid;
+    if(student)
     {
-        return res.json({message: "Student entry not found in student mark data(1 deleted)"});
+       stdid=student._id;
     }
+    console.log("id is for deleteL: "+stdid);
     await Mark.deleteMany({studentId:stdid});
 
+   await Studentflag.deleteMany({studentId:studentUserName});
 
-    const std=await Student.findOne({id:studentUserName});
-    if(!std)
-    {
-        return res.json({message: "Student entry not found in student mapping data(2 deleted)"});
-    }
-    await Student.deleteOne({id:studentUserName});
+   await assignedQuestionModel.deleteMany({studentId:stdid});
 
-    const stdasg=await assignedQuestionModel.find({studentId:stdid});
-    if(!stdasg.length>0)
-    {
-        return res.json({message: "Student entry not found in  data(3 delete performed)"});
+   await Studentx.deleteOne({username:studentUserName});
 
-    }
-    await Student.deleteMany({studentId:stdid});
-
-    const stdflag=await Studentflag.find({studentId:studentUserName});
-    if(!stdflag.length>0)
-    {
-        return res.json({message: "Student entry not found in  data(4 delete performed)"});
-
-    }
-    await Student.deleteMany({studentId:studentUserName});
+   await Student.deleteOne({id:studentUserName});
 
     return res.json({
       message: 'Student  Data Deleted Successfully.',
@@ -76,19 +57,13 @@ router.post('/removestudent/:id', async (req, res) => {
 router.post('/removeallstudent', async (req, res) => {
     try { 
 
-        const collections = await mongoose.connection.db.listCollections({ name: 'students' }).toArray();
-
-    if (!collections.length > 0) {
-      return res.json({
-        exists: false,
-        message: 'Student Collection Not exists.',
-      });
-    }
+     
         await Studentx.collection.drop();
         await Student.collection.drop();
         await assignedQuestionModel.collection.drop();
         await Mark.collection.drop();
         await Studentflag.collection.drop();
+        await Submission.collection.drop();
 
 
         

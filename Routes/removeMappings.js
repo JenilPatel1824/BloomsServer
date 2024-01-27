@@ -13,20 +13,18 @@ const assignedQuestionModel = require('../models/asiignedQuestionSchema');
 const Student= require('../models/Student');
 
 
+const Studentflag=require('../models/studentFalgSchema');
+const Submission = require("../models/sumissionSchema");
+
+
 router.post('/removealldsem', async (req, res) => {
     try { 
 
-        const collections = await mongoose.connection.db.listCollections({ name: 'studentxies' }).toArray();
-
-    if (!collections.length > 0) {
-      return res.json({
-        exists: false,
-        message: 'Student mapping (studentxies) Collection Not exists.',
-      });
-    }
         await Student.collection.drop();
-
-        
+        await assignedQuestionModel.collection.drop();
+        await Mark.collection.drop();
+        await Studentflag.collection.drop();
+        await Submission.collection.drop();
       return res.json({
         message: 'All Student Sem roll mapping Data Deleted Successfully.',
       });

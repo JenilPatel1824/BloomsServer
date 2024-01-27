@@ -7,6 +7,8 @@ const studentSchema = require("../models/studentSchema");
 const Professor = mongoose.model("Professor", professorSchema);
 const Student = mongoose.model("Student", studentSchema);
 const secretKey = "abcd";
+const bcrypt = require('bcrypt');
+
 const Admin = require("../models/adminSchema");
 const {
   verifyToken,
@@ -100,15 +102,20 @@ router.post("/login", async (req, res) => {
       //console.log(password);
       //console.log(customer.password);
 
-      if (password == professor.password) {
-        passwordMatch = true;
-      }
+      // if (password == professor.password) {
+      //   passwordMatch = true;
+      // }
+      
+       passwordMatch = await bcrypt.compare(password, professor.password);
+      console.log("matched: "+passwordMatch);
+
 
       if (!passwordMatch) {
         return res
           .status(401)
           .json({ error: "Incorrect Username or Password" });
       }
+      console.log("passed 401");
       passwordMatch = false;
       const payload = {
         user: {
@@ -124,6 +131,8 @@ router.post("/login", async (req, res) => {
         username: professor.username, // Use the appropriate username
       });
 
+      console.log("returnung 200");
+
       return res
         .status(200)
         .json({
@@ -132,9 +141,7 @@ router.post("/login", async (req, res) => {
           username: username,
         });
     } else if (student) {
-      if (password == student.password) {
-        passwordMatch = true;
-      }
+      passwordMatch = await bcrypt.compare(password, student.password);
 
       if (!passwordMatch) {
         return res
@@ -181,15 +188,17 @@ router.post("/login", async (req, res) => {
           .json({ error: "Incorrect Username or Password" });
       }
       passwordMatch = false;
+
       const payload = {
         user: {
           id: admin._id,
           username: admin.username,
         },
       };
-      console.log("genrating token");
-      const token = jwt.sign(payload, secretKey, { expiresIn: "1h" });
-      res.cookie("token", token, { httpOnly: true });
+
+       const token = jwt.sign(payload, secretKey, { expiresIn: "1h" });
+       res.cookie("token", token, { httpOnly: true });
+     
       console.log("pushing in active");
       activeSessions.push({
         token: req.cookies.token, // Assuming you have a way to associate tokens with sessions
@@ -203,7 +212,7 @@ router.post("/login", async (req, res) => {
 
         .json({
           msg: "Login Successful",
-          adminToken: token,
+          otpverifytoken:token,
           username: username,
         });
     }

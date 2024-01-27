@@ -17,6 +17,10 @@ const practiceQuestionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  department: {
+    type: String,
+    required: true,
+  },
 
 });
 

@@ -5,6 +5,8 @@ const subjectDataSchema = new mongoose.Schema({
   subject: { type: String, required: true },
   coMarks: { type: [Number], required: true, validate: [arrayLength, '{PATH} must be of length 6'] },
   cutoff: { type: Number, required: true },
+  department: { type: String, required: true },
+
 });
 
 // Custom validation function to ensure the length of the coMarks array is 6

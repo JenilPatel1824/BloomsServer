@@ -35,6 +35,7 @@ router.post('/uploadquestionendpoint', upload.single('file'), async (req, res) =
             semester:sem,
             subject:subject,
             co:co,
+            department:department,
           }
           questionData.push(qobj);
         }
