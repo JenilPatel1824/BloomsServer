@@ -68,6 +68,7 @@ app.use('/',require("./Routes/studentdataforadmin"))
 app.use('/',require("./Routes/professordataforadmin"))
 app.use('/',require("./Routes/mappingdataforadmin"))
 app.use('/',require("./Routes/removeMappings"))
+app.use('/',require("./Routes/adddepartment"))
 
 
 
