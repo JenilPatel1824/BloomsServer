@@ -58,6 +58,8 @@ router.post("/verifysubmission", async (req, res) => {
     if(remark==""){
         uremark="NA";
     }
+
+    if(subm){
     if(subm.flag=="-1")
     {
         if(action=="reject")
@@ -65,6 +67,7 @@ router.post("/verifysubmission", async (req, res) => {
             secondtime=true;
         }
     }
+  }
     if(action=="accept")
     {
         flag="0";
@@ -84,11 +87,26 @@ router.post("/verifysubmission", async (req, res) => {
         flag="2";
     }
 
+   
+
     const submissionobj = await Submission.findOneAndUpdate(
         { subject: subject, co: co, id: id },
         { $set: { flag: flag, remark: uremark } },
         { new: true }
       );
+
+      if(flag=="0")
+      {
+        const std=await Student.findOne({id:id});
+        let uidd;
+        if(std)
+        {
+          uidd=std._id;
+
+        }
+        console.log("data for delete asgn q: "+uidd+" "+subject+" "+co);
+        await assignedQuestionModel.deleteOne({studentId:uidd,subject:subject,CO:co});
+      }
           
 
 

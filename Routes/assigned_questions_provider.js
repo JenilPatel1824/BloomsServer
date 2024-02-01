@@ -14,8 +14,11 @@ router.post('/fetchassignedquestions', async (req, res) => {
     const luname = req.body;
     //console.log(luname.luname);
     let student=await Student.findOne({id:luname.luname});
-
-    let did=student._id;
+    let did;
+    if(student)
+    {
+       did=student._id;
+    }
     //console.log("This is did   "+did);
 
     let questionsobjs= await assignedQuestionModel.find({studentId:did});

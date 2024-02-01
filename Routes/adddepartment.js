@@ -3,6 +3,11 @@
 const express = require('express');
 const router = express.Router();
 const DepartmentModel = require('../models/depsemsubject'); // Import your Mongoose model
+const professorSchema = require('../models/professorSchema'); // Import your Professor schema
+const { default: mongoose } = require('mongoose');
+const Professor = mongoose.model("professor", professorSchema);
+
+
 
 // Route to add a new department
 router.post('/add-department', async (req, res) => {
@@ -42,12 +47,17 @@ router.get('/departments', async (req, res) => {
     try {
       const { department } = req.params;
       await DepartmentModel.deleteMany({ department });
+      await Professor.deleteMany({department:department});
+      
+
+
       res.status(200).json({ message: 'Department removed successfully' });
     } catch (error) {
       console.error('Error removing department:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+  
   router.get('/departments/:department', async (req, res) => {
     try {
       const { department } = req.params;

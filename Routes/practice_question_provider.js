@@ -8,6 +8,8 @@ const Mark = require('../models/mark'); // Import your Mark schema
 const studentSchema=require('../models/studentSchema');
 const mongoose = require('mongoose');
 const studentmodel=mongoose.model('student',studentSchema);
+const professorSchema=require('../models/professorSchema');
+const Professor=mongoose.model('professor',professorSchema);
 
 
 const router = express.Router();
@@ -143,6 +145,95 @@ const assignRandomQuestions = async (studentId, subject, questions,co,department
       throw error; // You can handle the error according to your application's needs
     }
   };
+
+  router.get('/department-data/:username', async (req, res) => {
+    const loginuname = req.params.username;
+    console.log("username: "+loginuname);
+    let dname;
+
+    const prof=await Professor.findOne({username:loginuname});
+    if(prof)
+    {
+      dname=prof.department;
+    }
+    console.log("retrived dname: "+dname);
+
+
+  
+    try {
+      console.log("got req for bank");
+      const data = await questionModel.find({ department:dname });
+      res.json(data);
+    } catch (error) {
+      console.error('Error fetching department data:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+
+  router.post('/remove-all-questions', async (req, res) => {
+    try {
+      const { username } = req.body;
+      const pf=await Professor.findOne({username:username});
+      let dep;
+      if(pf)
+      {
+        dep=pf.department;
+      }
+      await questionModel.deleteMany({department:dep});
+
+
+      res.status(200).json({ message: 'All questions removed successfully' });
+    } catch (error) {
+      // Handle errors and send an error response
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  router.post('/remove-all-subject-questions', async (req, res) => {
+    try {
+      const { username,subject } = req.body;
+      console.log("uname,subject: "+subject+" "+username );
+      const pf=await Professor.findOne({username:username});
+      let dep;
+      if(pf)
+      {
+        dep=pf.department;
+      }
+      await questionModel.deleteMany({department:dep,subject:subject});
+
+
+      res.status(200).json({ message: 'All questions removed successfully' });
+    } catch (error) {
+      // Handle errors and send an error response
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  router.post('/remove-all-subject-co-questions', async (req, res) => {
+    try {
+      const { username,subject,co } = req.body;
+      console.log("uname,subject: "+subject+" "+username );
+      const pf=await Professor.findOne({username:username});
+      let dep;
+      if(pf)
+      {
+        dep=pf.department;
+      }
+      await questionModel.deleteMany({department:dep,subject:subject,co:co});
+
+
+      res.status(200).json({ message: 'All questions removed successfully' });
+    } catch (error) {
+      // Handle errors and send an error response
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
+  
 
 // Export the router for use in other files
 module.exports = router;

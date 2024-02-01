@@ -70,6 +70,8 @@ app.use('/',require("./Routes/mappingdataforadmin"))
 app.use('/',require("./Routes/removeMappings"))
 app.use('/',require("./Routes/adddepartment"))
 app.use('/',require("./Routes/departmentsubjectfetch"))
+app.use('/',require("./Routes/reset"))
+
 
 
 
