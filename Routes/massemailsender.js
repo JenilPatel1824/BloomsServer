@@ -25,9 +25,9 @@ router.post('/massemailsender', async (req, res) => {
     console.log(req.body); // Log the entire request body to check if it contains the expected data
 
     const {emailBody,recipients} = req.body;
-    console.log(recipients);
-    console.log(emailBody);
-    if(recipients=="Student"){
+    console.log("Recipients "+recipients);
+    console.log("Emailbody: "+emailBody);
+    if(recipients.includes("Student")){
         console.log("in student");
     const allstudents = await Studentd.find();
     if (!allstudents || allstudents.length === 0) {
@@ -63,7 +63,8 @@ router.post('/massemailsender', async (req, res) => {
       });
     }
 
-    if(recipients=="Faculty"){
+     if(recipients.includes("Faculty")){
+      console.log("inside faculty");
 
         const allfaculty = await Professor.find();
         if (!allfaculty || allfaculty.length === 0) {
@@ -99,88 +100,19 @@ router.post('/massemailsender', async (req, res) => {
           });
         }
 
-
-        if(recipients=="Both"){
-
-            if(1)
-            {
-            console.log("in both");
-        const allfaculty = await Professor.find();
-        if (!allfaculty || allfaculty.length === 0) {
-          return res.json({ message: "No professor found" });
-        }
-    
-        const recipientsemail = allfaculty.map(faculty => faculty.email).join(', ');
-    
-    
-        const mailOptions = {
-            from: 'jenil.kajavadara1@gmail.com',
-            to: recipientsemail,
-            subject: 'Anouncement',
-            text: emailBody || 'Default email body',
-          };
-    
-          const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-              user: 'jenil.kajavadara1@gmail.com',
-              pass: 'ffqv fonr ojes tcom',
-            },
-          });
-    
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              console.error('Error sending email:', error);
-              return res.status(500).json({ message: 'Error sending email' });
-            } else {
-              console.log('Email sent successful to:', recipients);
-              return res.json({ message: 'Email sent successfully to faculty members' });
-            }
-          });
-        }}
-
-        if(1)
+        if(!recipients.includes("Student")&&!recipients.includes("Faculty"))
         {
-            console.log("in student");
-            const allstudents = await Studentd.find();
-            if (!allstudents || allstudents.length === 0) {
-              return res.json({ message: "No students found" });
-            }
-        
-            const recipientsemail = allstudents.map(student => student.email).join(', ');
-        
-        
-            const mailOptions = {
-                from: 'jenil.kajavadara1@gmail.com',
-                to: recipientsemail,
-                subject: 'About Submission',
-                text: emailBody || 'Default email body', // Use the provided emailBody or a default value
-              };
-        
-              const transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                  user: 'jenil.kajavadara1@gmail.com',
-                  pass: 'ffqv fonr ojes tcom',
-                },
-              });
-        
-              transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                  console.error('Error sending email:', error);
-                  return res.status(500).json({ message: 'Error sending email' });
-                } else {
-                  console.log('Email sent successful to:', recipients);
-                  return res.json({ message: 'Email sent successfully to students' });
-                }
-              });
+          return res.json({ message: 'Please enter valid keyword' });
+
 
         }
 
+
+       
 
 
   } catch (error) {
-    console.error('Unable to Find professor at the moment', error);
+    console.error('error in massmailsender.js', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
   

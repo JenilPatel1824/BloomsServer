@@ -6,6 +6,7 @@ const DepartmentModel = require('../models/depsemsubject'); // Import your Mongo
 const professorSchema = require('../models/professorSchema'); // Import your Professor schema
 const { default: mongoose } = require('mongoose');
 const Professor = mongoose.model("professor", professorSchema);
+const Failstudent =require('../models/failstudentSchema');
 
 
 
@@ -48,7 +49,8 @@ router.get('/departments', async (req, res) => {
       const { department } = req.params;
       await DepartmentModel.deleteMany({ department });
       await Professor.deleteMany({department:department});
-      
+      await Failstudent.deleteMany({Department:department});
+
 
 
       res.status(200).json({ message: 'Department removed successfully' });

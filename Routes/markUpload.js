@@ -7,6 +7,13 @@ const router = express.Router();
 const Mark = require('../models/mark'); // Import your Mark schema
 const Student = require('../models/Student'); // Import your Student schema
 const subjectData = require('../models/subjectDataSchema'); // Import your Mark schema
+const professorSchema=require('../models/professorSchema');
+const { default: mongoose } = require('mongoose');
+
+const Professor=mongoose.model('professor',professorSchema);
+const Failstudent=require('../models/failstudentSchema');
+const Submission = require("../models/sumissionSchema");
+
 
 
 const storage = multer.memoryStorage();
@@ -28,6 +35,7 @@ router.post('/upload-endpoint', upload.single('file'), async (req, res) => {
     coMarks= JSON.parse(coMarks);
     coMarks = Object.values(coMarks);
     coMarks = coMarks.map(Number);
+    let fcount=[0,0,0,0,0,0];
 
 
     const sdata={
@@ -37,6 +45,7 @@ router.post('/upload-endpoint', upload.single('file'), async (req, res) => {
         coMarks:coMarks,
         cutoff:cutoff,
     }
+    let coMark=coMarks;
     subjectData.create(sdata);
 
     console.log(subject);
@@ -75,6 +84,7 @@ router.post('/upload-endpoint', upload.single('file'), async (req, res) => {
         }
       });
     });
+
     let stid;
     let students=[];
     // Assuming student details are already in the database
@@ -95,7 +105,30 @@ router.post('/upload-endpoint', upload.single('file'), async (req, res) => {
 
     // Insert marks data into MongoDB
    // Insert marks data into MongoDB
-for (const mark of marksData) {
+
+   for (let i = 0; i < coMark.length; i++) {
+    coMark[i] = (coMark[i] * cutoff) / 100;
+}
+for (const mark of marksData.slice(2)) {
+
+  console.log(mark.rollNo);
+  console.log(mark.co1);
+
+  
+    let stdmark=[mark.co1,mark.co2,mark.co3,mark.co4,mark.co5,mark.co6];
+    for(let i=0;i<6;i++)
+    {
+        if(stdmark[i]<coMark[i])
+        {   
+          console.log(mark.rollNo);
+          console.log(stdmark);
+            console.log(stdmark[i]+" "+coMark[i] );
+            let x=i+1;
+            console.log("Count plus for  "+mark.rollNo+" CO "+x);
+             fcount[i]=fcount[i]+1;
+        }
+        
+    }
 
 
     const student = students.find((s) => s.roll === mark.rollNo);
@@ -104,6 +137,27 @@ for (const mark of marksData) {
       mark.studentId = student._id;
       await Mark.create(mark);
     }
+  }
+
+
+  for (let i = 0; i < 6; i++) {
+    let x=i+1;
+        let fobj={
+          Department:department,
+          Semester:sem,
+          Subject:subject,
+          Skill:"CO"+x,
+          UnsuccessfulStudents:fcount[i],
+        }
+        const fstd=await Failstudent.findOne({Department:department,Semester:sem,Subject:subject, Skill:"CO"+x});
+        if(fstd)
+        {
+          fstd.UnsuccessfulStudents+=fcount[i];
+          await fstd.save();
+        }
+        else{
+        await Failstudent.create(fobj);
+        }
   }
   
 
@@ -116,5 +170,148 @@ for (const mark of marksData) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+// routes/reports.js
+
+
+router.post('/getreports', async (req, res) => {
+  try {
+    const { username } = req.body;
+    console.log("get reports api");
+
+    
+
+    const p=await Professor.findOne({username:username});
+    let department;
+    if(p)
+    {
+          department=p.department;
+    }
+
+
+    const data=await Failstudent.find({department:department});
+    console.log("sending: "+data);
+
+    res.json({
+      message: 'Data sent Successfully',
+      data: data,
+    });
+
+  } 
+  catch (error) {
+    console.error('Error uploading file to MongoDB:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.post('/getadminreports', async (req, res) => {
+  try {
+    console.log("get admin reports api");
+
+
+    
+
+    const data=await Failstudent.find();
+    console.log("sending: "+data);
+
+    res.json({
+      message: 'Data sent Successfully',
+      data: data,
+    });
+
+  } 
+  catch (error) {
+    console.error('Error uploading file to MongoDB:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+
+
+
+
+router.get('/marks-data', async (req, res) => {
+  try {
+    // Fetch marks data from MongoDB
+    const marksData = await Mark.find();
+    res.json({ content: marksData });
+  } catch (error) {
+    console.error('Error fetching marks data from MongoDB:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+router.delete('/delete-marks', async (req, res) => {
+  try {
+    const { idsToDelete } = req.body;
+
+    // Validate if idsToDelete is an array of valid ObjectIDs
+    if (!idsToDelete || !Array.isArray(idsToDelete) || idsToDelete.some(id => !mongoose.isValidObjectId(id))) {
+      return res.status(400).json({ error: 'Invalid input for deletion.' });
+    }
+
+    // Perform the deletion based on IDs
+    const deleteResult = await Mark.deleteMany({ _id: { $in: idsToDelete } });
+
+    if (deleteResult.deletedCount > 0) {
+      res.json({ message: 'Marks deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'No matching records found for deletion.' });
+    }
+  } catch (error) {
+    console.error('Error deleting marks:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.delete('/delete-mark/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate if id is a valid ObjectID
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ error: 'Invalid input for deletion.' });
+    }
+
+    // Perform the deletion based on ID
+    const deleteResult = await Mark.deleteOne({ _id: id });
+
+    if (deleteResult.deletedCount > 0) {
+      res.json({ message: 'Mark deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'No matching record found for deletion.' });
+    }
+  } catch (error) {
+    console.error('Error deleting mark:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.put('/update-mark/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedMarkData = req.body;
+
+    const updatedMark = await Mark.findByIdAndUpdate(id, updatedMarkData, { new: true });
+
+    if (updatedMark) {
+      res.json({ message: 'Mark updated successfully', updatedMark });
+    } else {
+      res.status(404).json({ error: 'No matching record found for update' });
+    }
+  } catch (error) {
+    console.error('Error updating mark:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
 
 module.exports = router;

@@ -15,6 +15,7 @@ const Student= require('../models/Student');
 
 const Studentflag=require('../models/studentFalgSchema');
 const Submission = require("../models/sumissionSchema");
+const Failstudent=require('../models/failstudentSchema');
 
 
 router.post('/removealldsem', async (req, res) => {
@@ -25,6 +26,8 @@ router.post('/removealldsem', async (req, res) => {
         await Mark.collection.drop();
         await Studentflag.collection.drop();
         await Submission.collection.drop();
+        await Failstudent.collection.drop();
+
       return res.json({
         message: 'All Student Sem roll mapping Data Deleted Successfully.',
       });

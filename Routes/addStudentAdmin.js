@@ -75,5 +75,45 @@ router.post('/addstudent', upload.single('file'), async (req, res) => {
 });
 
 
+router.put('/students/:username', async (req, res) => {
+  const { username } = req.params;
+  const { name, department, email, mobile_no, Admission_Year } = req.body;
+
+  try {
+    const updatedStudent = await Student.findOneAndUpdate(
+      { username },
+      { name, department, email, mobile_no, Admission_Year },
+      { new: true }
+    );
+
+    res.json(updatedStudent);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+router.put('/update-student/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedMarkData = req.body;
+    console.log(updatedMarkData);
+
+    const updatedMark = await Student.findByIdAndUpdate(id, updatedMarkData, { new: true });
+
+    if (updatedMark) {
+      res.json({ message: 'Mark updated successfully', updatedMark });
+    } else {
+      res.status(404).json({ error: 'No matching record found for update' });
+    }
+  } catch (error) {
+    console.error('Error updating mark:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
 
 module.exports = router;
