@@ -13,6 +13,7 @@ const DepartmentModel=require('../models/depsemsubject');
 const questionModel = require('../models/practiceQuestionsSchema');
 const professorSchema = require('../models/professorSchema'); // Import your Student schema
 const Professor= mongoose.model("professor",professorSchema);
+const Failstudent=require('../models/failstudentSchema');
 
 
 
@@ -30,6 +31,8 @@ router.post('/reset', async (req, res) => {
     await Studentflag.collection.drop();
     await Submission.collection.drop();
     await Professor.collection.drop();
+    await Failstudent.collection.drop();
+
 
     return res.json({
       message: 'Whole  Data Deleted Successfully.',
