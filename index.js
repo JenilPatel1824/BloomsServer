@@ -10,7 +10,7 @@ const portnumber = process.env.PORT;
 const cors = require('cors');
 
 
-mongoose.connect(`mongodb+srv://JenilPatel:GJ33d0779@dbb.hjoqiv2.mongodb.net/?retryWrites=true&w=majority
+mongoose.connect(`
 `, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("Connected to the database!");
